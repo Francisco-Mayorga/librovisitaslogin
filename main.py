@@ -44,9 +44,10 @@ class ResultHandler(BaseHandler):
             nombre = "anónimo"
 
         msg = Message(nombre=nombre, email=email, texto=texto)
+        final_msg = ", ".join([nombre, email, texto])
         msg.put()
 
-        return self.write(nombre)
+        return self.write(final_msg)
 
 class MessageListHandler(BaseHandler):
     def get(self):
