@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 import os
 import jinja2
 import webapp2
@@ -44,7 +46,7 @@ class ResultHandler(BaseHandler):
         msg = Message(nombre=nombre, email=email, texto=texto)
         msg.put()
 
-        return self.write(nombre, email, texto)
+        return self.write(nombre)
 
 class MessageListHandler(BaseHandler):
     def get(self):
