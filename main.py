@@ -40,8 +40,8 @@ class ResultHandler(BaseHandler):
         email = self.request.get("email")
         texto = self.request.get("texto")
 
-        if nombre == "":
-            nombre = "anónimo"
+        if not nombre:
+            nombre = u"anónimo"
 
         msg = Message(nombre=nombre, email=email, texto=texto)
         msg.put()
