@@ -44,10 +44,10 @@ class ResultHandler(BaseHandler):
             nombre = "anónimo"
 
         msg = Message(nombre=nombre, email=email, texto=texto)
-        final_msg = ", ".join([nombre, email, texto])
         msg.put()
 
-        return self.write(final_msg)
+        params = {"nombre": nombre, "email": email, "texto": texto}
+        return self.render_template("result.html", params=params)
 
 class MessageListHandler(BaseHandler):
     def get(self):
@@ -63,7 +63,7 @@ class MessageDetailsHandler(BaseHandler):
 
 app = webapp2.WSGIApplication([
     webapp2.Route('/', MainHandler),
-    webapp2.Route('/result', ResultHandler),
+    webapp2.Route('/result', ResultHandler, name="resultado"),
     webapp2.Route('/message_list', MessageListHandler),
     webapp2.Route('/message/<message_id:\d+>', MessageDetailsHandler),
 
