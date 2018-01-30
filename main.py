@@ -61,10 +61,40 @@ class MessageDetailsHandler(BaseHandler):
         params = {"message": message}
         return self.render_template("message_details.html", params=params)
 
+class EditMessageHandler(BaseHandler):
+    def get(self, message_id):
+        message = Message.get_by_id(int(message_id))
+        params = {"message": message}
+        return self.render_template("message_edit.html", params=params)
+
+    def post(self, message_id):
+        nombre = self.request.get("nombre")
+        email = self.request.get("email")
+        texto = self.request.get("texto")
+        message = Message.get_by_id(int(message_id))
+        message.nombre = nombre
+        message.email = email
+        message.texto = texto
+        message.put()
+        return self.redirect_to("msg-list")
+
+class DeleteMessageHandler(BaseHandler):
+    def get(self, message_id):
+        message = Message.get_by_id(int(message_id))
+        params = {"message": message}
+        return self.render_template("message_delete.html", params=params)
+
+    def post(self, message_id):
+        message = Message.get_by_id(int(message_id))
+        message.key.delete()
+        return self.redirect_to("msg-list")
+
 app = webapp2.WSGIApplication([
     webapp2.Route('/', MainHandler),
-    webapp2.Route('/result', ResultHandler, name="resultado"),
-    webapp2.Route('/message_list', MessageListHandler),
+    webapp2.Route('/result', ResultHandler),
+    webapp2.Route('/message_list', MessageListHandler, name="msg-list"),
     webapp2.Route('/message/<message_id:\d+>', MessageDetailsHandler),
+    webapp2.Route('/message/<message_id:\d+>/edit', EditMessageHandler),
+    webapp2.Route('/message/<message_id:\d+>/delete', DeleteMessageHandler),
 
 ], debug=True)

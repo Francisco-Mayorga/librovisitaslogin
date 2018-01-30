@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Borrar mensaje</title>
+</head>
+<body>
+    <h1>¿Quieres borrar realmente el mensaje?</h1>
+
+    <form action="/message/{{ message.key.id() }}/delete" method="post">
+        <button type="submit">SI, ¡eliminalo!</button>
+    </form>
+</body>
+</html>

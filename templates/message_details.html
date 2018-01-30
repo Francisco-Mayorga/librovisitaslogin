@@ -14,5 +14,8 @@
         <p>Texto: {{ message.texto }}</p>
 
         <p>Fecha: {{ message.created }}</p>
+        <a href="/message/{{ message.key.id() }}/edit">Editar mensaje</a>
+        <br>
+        <a href="/message/{{ message.key.id() }}/delete">Borrar mensaje</a>
     </body>
 </html>

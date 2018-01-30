@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Editar mensaje</title>
+</head>
+<body>
+    <form action="/message/{{ message.key.id() }}/edit" method="post">
+        <input name="nombre" value="{{ message.nombre }}">
+        <input name="email" value="{{ message.email }}">
+        <input name="texto" value="{{ message.texto }}">
+
+        <button type="submit">OK</button>
+    </form>
+</body>
+</html>
