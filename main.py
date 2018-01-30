@@ -51,7 +51,7 @@ class ResultHandler(BaseHandler):
 
 class MessageListHandler(BaseHandler):
     def get(self):
-        messages = Message.query().fetch()
+        messages = Message.query(Message.deleted == False).fetch()
         params = {"messages": messages}
         return self.render_template("message_list.html", params=params)
 
@@ -86,7 +86,8 @@ class DeleteMessageHandler(BaseHandler):
 
     def post(self, message_id):
         message = Message.get_by_id(int(message_id))
-        message.key.delete()
+        message.deleted = True
+        message.put()
         return self.redirect_to("msg-list")
 
 app = webapp2.WSGIApplication([

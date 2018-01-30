@@ -5,3 +5,5 @@ class Message(ndb.Model):
     email = ndb.StringProperty()
     texto = ndb.TextProperty()
     created = ndb.DateTimeProperty(auto_now_add=True)
+    deleted = ndb.BooleanProperty(default=False)
+
