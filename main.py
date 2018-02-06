@@ -112,6 +112,11 @@ class EditMessageHandler(BaseHandler):
         user = users.get_current_user()
 
         if user:
+            if users.is_current_user_admin():
+                self.response.write('You are an administrator.')
+            else:
+                self.response.write('You are not an administrator.')
+                return self.redirect_to("index")
             logged_in = True
             logout_url = users.create_logout_url('/')
 
@@ -138,6 +143,11 @@ class DeleteMessageHandler(BaseHandler):
         user = users.get_current_user()
 
         if user:
+            if users.is_current_user_admin():
+                self.response.write('You are an administrator.')
+            else:
+                self.response.write('You are not an administrator.')
+                return self.redirect_to("index")
             logged_in = True
             logout_url = users.create_logout_url('/')
 
