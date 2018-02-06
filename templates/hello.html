@@ -6,15 +6,23 @@
     </head>
 
     <body>
+        {% if logged_in %}
+        <h1>Hello, SmartNinja {{ user.nickname() }}!</h1>
         <h1>Bienvenido al Hotel Filton</h1>
         <h2>Deje un mensaje en nuestro libro de visitas</h2>
 
         <form method="post" action="/result">
             <input type="text" name="nombre" placeholder="escriba su nombre"/><br><br>
-            <input type="email" name="email" placeholder="email"/><br><br>
             <textarea name="texto" required rows="10" cols="40" placeholder="escriba aquí el texto"></textarea><br><br>
 
             <button type="submit">Publicar</button>
         </form>
+
+        <p><a href="{{ logout_url }}">Logout</a></p>
+        {% else %}
+        <h1>Hello anonymous ninja!</h1>
+
+        <p>Please login here: <a href="{{ login_url }}">Login</a></p>
+        {% endif %}
     </body>
 </html>

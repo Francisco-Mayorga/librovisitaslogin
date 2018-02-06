@@ -5,6 +5,8 @@ import os
 import jinja2
 import webapp2
 from models import Message
+from google.appengine.api import users
+
 
 
 template_dir = os.path.join(os.path.dirname(__file__), "templates")
@@ -32,12 +34,37 @@ class BaseHandler(webapp2.RequestHandler):
 
 class MainHandler(BaseHandler):
     def get(self):
-        return self.render_template("hello.html")
+        user = users.get_current_user()
+
+        if user:
+            logged_in = True
+            logout_url = users.create_logout_url('/')
+
+            params = {"logged_in": logged_in, "logout_url": logout_url, "user": user}
+        else:
+            logged_in = False
+            login_url = users.create_login_url('/')
+
+            params = {"logged_in": logged_in, "login_url": login_url, "user": user}
+
+        return self.render_template("hello.html", params=params)
+
+class AdminHandler(BaseHandler):
+    def get(self):
+        user = users.get_current_user()
+        if user:
+            if users.is_current_user_admin():
+                self.response.write('You are an administrator.')
+            else:
+                self.response.write('You are not an administrator.')
+        else:
+            self.response.write('You are not logged in.')
 
 class ResultHandler(BaseHandler):
     def post(self):
+        user = users.get_current_user()
         nombre = self.request.get("nombre")
-        email = self.request.get("email")
+        email = user.email()
         texto = self.request.get("texto")
 
         if not nombre:
@@ -51,20 +78,48 @@ class ResultHandler(BaseHandler):
 
 class MessageListHandler(BaseHandler):
     def get(self):
+        user = users.get_current_user()
+
+        if user:
+            logged_in = True
+            logout_url = users.create_logout_url('/')
+
+            params = {"logged_in": logged_in, "logout_url": logout_url, "user": user}
+        else:
+            return self.redirect_to("index")
+
         messages = Message.query(Message.deleted == False).fetch()
-        params = {"messages": messages}
+        params["messages"]= messages
         return self.render_template("message_list.html", params=params)
 
 class MessageDetailsHandler(BaseHandler):
     def get(self, message_id):
+        user = users.get_current_user()
+
+        if user:
+            logged_in = True
+            logout_url = users.create_logout_url('/')
+
+            params = {"logged_in": logged_in, "logout_url": logout_url, "user": user}
+        else:
+            return self.redirect_to("index")
         message = Message.get_by_id(int(message_id))
-        params = {"message": message}
+        params["message"] = message
         return self.render_template("message_details.html", params=params)
 
 class EditMessageHandler(BaseHandler):
     def get(self, message_id):
+        user = users.get_current_user()
+
+        if user:
+            logged_in = True
+            logout_url = users.create_logout_url('/')
+
+            params = {"logged_in": logged_in, "logout_url": logout_url, "user": user}
+        else:
+            return self.redirect_to("index")
         message = Message.get_by_id(int(message_id))
-        params = {"message": message}
+        params["message"]= message
         return self.render_template("message_edit.html", params=params)
 
     def post(self, message_id):
@@ -80,8 +135,17 @@ class EditMessageHandler(BaseHandler):
 
 class DeleteMessageHandler(BaseHandler):
     def get(self, message_id):
+        user = users.get_current_user()
+
+        if user:
+            logged_in = True
+            logout_url = users.create_logout_url('/')
+
+            params = {"logged_in": logged_in, "logout_url": logout_url, "user": user}
+        else:
+            return self.redirect_to("index")
         message = Message.get_by_id(int(message_id))
-        params = {"message": message}
+        params["message"] = message
         return self.render_template("message_delete.html", params=params)
 
     def post(self, message_id):
@@ -91,10 +155,11 @@ class DeleteMessageHandler(BaseHandler):
         return self.redirect_to("msg-list")
 
 app = webapp2.WSGIApplication([
-    webapp2.Route('/', MainHandler),
+    webapp2.Route('/', MainHandler, name="index"),
+    webapp2.Route('/admin', AdminHandler),
     webapp2.Route('/result', ResultHandler),
     webapp2.Route('/message_list', MessageListHandler, name="msg-list"),
-    webapp2.Route('/message/<message_id:\d+>', MessageDetailsHandler),
+    webapp2.Route('/message/<message_id:\d+>/details', MessageDetailsHandler),
     webapp2.Route('/message/<message_id:\d+>/edit', EditMessageHandler),
     webapp2.Route('/message/<message_id:\d+>/delete', DeleteMessageHandler),
 
