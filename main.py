@@ -109,23 +109,14 @@ class MessageDetailsHandler(BaseHandler):
 
 class EditMessageHandler(BaseHandler):
     def get(self, message_id):
-        user = users.get_current_user()
+        if not users.is_current_user_admin():
+            return self.write("You are not admin")
 
-        if user:
-            if users.is_current_user_admin():
-                self.response.write('You are an administrator.')
-            else:
-                self.response.write('You are not an administrator.')
-                return self.redirect_to("index")
-            logged_in = True
-            logout_url = users.create_logout_url('/')
-
-            params = {"logged_in": logged_in, "logout_url": logout_url, "user": user}
-        else:
-            return self.redirect_to("index")
         message = Message.get_by_id(int(message_id))
-        params["message"]= message
-        return self.render_template("message_edit.html", params=params)
+        context = {
+            "message": message,
+        }
+        return self.render_template("message_edit.html", params=context)
 
     def post(self, message_id):
         nombre = self.request.get("nombre")
@@ -140,23 +131,14 @@ class EditMessageHandler(BaseHandler):
 
 class DeleteMessageHandler(BaseHandler):
     def get(self, message_id):
-        user = users.get_current_user()
+        if not users.is_current_user_admin():
+            return self.write("You are not admin")
 
-        if user:
-            if users.is_current_user_admin():
-                self.response.write('You are an administrator.')
-            else:
-                self.response.write('You are not an administrator.')
-                return self.redirect_to("index")
-            logged_in = True
-            logout_url = users.create_logout_url('/')
-
-            params = {"logged_in": logged_in, "logout_url": logout_url, "user": user}
-        else:
-            return self.redirect_to("index")
         message = Message.get_by_id(int(message_id))
-        params["message"] = message
-        return self.render_template("message_delete.html", params=params)
+        context = {
+            "message": message,
+        }
+        return self.render_template("message_delete.html", params=context)
 
     def post(self, message_id):
         message = Message.get_by_id(int(message_id))
